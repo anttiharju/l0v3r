@@ -1,0 +1,18 @@
+{
+  "keybindings": {
+    "Home": {
+      "<q>": "Quit", // Quit the application
+      "<Ctrl-d>": "Quit", // Another way to quit
+      "<Ctrl-c>": "Quit", // Yet another way to quit
+      "<Ctrl-z>": "Suspend", // Suspend the application
+      "<j>": "MoveDown", // Move down
+      "<k>": "MoveUp", // Move up
+      "<ctrl-j>": "MoveSectionDown", // Move a whole section down
+      "<ctrl-k>": "MoveSectionUp", // Move a whole section up
+      "<Up>": "MoveUp", // Move up
+      "<Down>": "MoveDown", // Move down
+      "<Enter>": "SelectItem", // Move down
+      "<s>": "Sticky", // Sticky Item
+    },
+  }
+}
