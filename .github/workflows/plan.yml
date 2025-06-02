@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Find changes
         id: changes
-        uses: anttiharju/actions/find-changes@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/find-changes@v0
 
       - name: Detect changes
         id: changed
@@ -34,29 +34,29 @@ jobs:
       - if: always()
         id: semver
         name: Require semantic version label
-        uses: anttiharju/actions/require-semver-label@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/require-semver-label@v0
         with:
           enforce: ${{ steps.changed.outputs.binary == 'true' || steps.changed.outputs.dist_brew == 'true' || steps.changed.outputs.dist_github == 'true' }}
 
       - if: always()
         name: action-validator
-        uses: anttiharju/actions/action-validator@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/action-validator@v0
 
       - if: always() && (steps.changed.outputs.github_actions_workflows == 'true' || github.event_name != 'pull_request')
         name: actionlint
-        uses: anttiharju/actions/actionlint@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/actionlint@v0
 
       - if: always()
         name: relcheck
-        uses: anttiharju/actions/relcheck@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/relcheck@v0
 
       - if: always()
         name: EditorConfig-Checker
-        uses: anttiharju/actions/editorconfig-checker@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/editorconfig-checker@v0
 
       - if: always() && (steps.changed.outputs.binary == 'true' || github.event_name != 'pull_request')
         name: go build
-        uses: anttiharju/actions/go-build@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/go-build@v0
 
       - if: always() && (steps.changed.outputs.binary == 'true' || github.event_name != 'pull_request')
         name: go test
@@ -66,19 +66,19 @@ jobs:
 
       - if: always() && (steps.changed.outputs.go_code == 'true' || github.event_name != 'pull_request')
         name: golangci-lint
-        uses: anttiharju/actions/golangci-lint@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/golangci-lint@v0
 
       - if: always()
         name: Keep .yml
-        uses: anttiharju/actions/keep-yml@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/keep-yml@v0
 
       - if: always() && (steps.changed.outputs.documentation == 'true' || github.event_name != 'pull_request')
         name: MkDocs
-        uses: anttiharju/actions/mkdocs-build-strict@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/mkdocs-build-strict@v0
 
       - if: always() && (steps.changed.outputs.md_and_yml == 'true' || github.event_name != 'pull_request')
         name: Prettier
-        uses: anttiharju/actions/prettier@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/prettier@v0
         with:
           patterns: "{*.yml,*.md}"
 
@@ -88,7 +88,7 @@ jobs:
 
       - if: always() && (steps.changed.outputs.scripts == 'true' || github.event_name != 'pull_request')
         name: ShellCheck
-        uses: anttiharju/actions/shellcheck@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/shellcheck@v0
     outputs:
       binary_changed: ${{ steps.changed.outputs.binary }}
       dist_changed: ${{ steps.changed.outputs.dist_brew || steps.changed.outputs.dist_github }}

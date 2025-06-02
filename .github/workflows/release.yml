@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Create GitHub release
         id: release
-        uses: anttiharju/actions/release@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        uses: anttiharju/actions/release@v0
         with:
           type: ${{ inputs.type }}
       - name: Setup cache
