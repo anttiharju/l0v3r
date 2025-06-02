@@ -1,0 +1,17 @@
+name: "Rubocop formula"
+description: "Run rubocop on the render formula"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Render out final formula
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO_NAME: ${{ github.event.repository.name }}
+      run: |
+        ./dist/brew/render.bash
+        echo "RB_FILE=${GH_REPO_NAME//-/_}" >> $GITHUB_ENV
+    - uses: anttiharju/actions/rubocop-file@bcd14f098b996de607f1e55eaf68188f0e24c29b
+      with:
+        file: "dist/brew/.${{ env.RB_FILE }}.rb"

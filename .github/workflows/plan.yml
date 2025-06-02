@@ -1,0 +1,96 @@
+name: Plan
+on:
+  pull_request:
+    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#pull_request
+    # defaults: opened, synchronize, reopened
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  workflow_call:
+    outputs:
+      release:
+        description: "Whether to trigger release workflows"
+        value: ${{ jobs.validate.outputs.release_type != '' || (jobs.validate.outputs.binary_changed == 'true' || jobs.validate.outputs.dist_changed == 'true') }}
+      release_type:
+        description: "The type of release to perform; major, minor, patch, or false"
+        value: ${{ jobs.validate.outputs.release_type }}
+      documentation:
+        description: "Whether to update the documentation website"
+        value: ${{ jobs.validate.outputs.documentation_changed == 'true' }}
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Find changes
+        id: changes
+        uses: anttiharju/actions/find-changes@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - name: Detect changes
+        id: changed
+        uses: ./.github/actions/detect-changes
+        with:
+          changes: ${{ steps.changes.outputs.array }}
+
+      - if: always()
+        id: semver
+        name: Require semantic version label
+        uses: anttiharju/actions/require-semver-label@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        with:
+          enforce: ${{ steps.changed.outputs.binary == 'true' || steps.changed.outputs.dist_brew == 'true' || steps.changed.outputs.dist_github == 'true' }}
+
+      - if: always()
+        name: action-validator
+        uses: anttiharju/actions/action-validator@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always() && (steps.changed.outputs.github_actions_workflows == 'true' || github.event_name != 'pull_request')
+        name: actionlint
+        uses: anttiharju/actions/actionlint@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always()
+        name: relcheck
+        uses: anttiharju/actions/relcheck@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always()
+        name: EditorConfig-Checker
+        uses: anttiharju/actions/editorconfig-checker@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always() && (steps.changed.outputs.binary == 'true' || github.event_name != 'pull_request')
+        name: go build
+        uses: anttiharju/actions/go-build@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always() && (steps.changed.outputs.binary == 'true' || github.event_name != 'pull_request')
+        name: go test
+        shell: sh
+        run: |
+          go test ./...
+
+      - if: always() && (steps.changed.outputs.go_code == 'true' || github.event_name != 'pull_request')
+        name: golangci-lint
+        uses: anttiharju/actions/golangci-lint@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always()
+        name: Keep .yml
+        uses: anttiharju/actions/keep-yml@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always() && (steps.changed.outputs.documentation == 'true' || github.event_name != 'pull_request')
+        name: MkDocs
+        uses: anttiharju/actions/mkdocs-build-strict@bcd14f098b996de607f1e55eaf68188f0e24c29b
+
+      - if: always() && (steps.changed.outputs.md_and_yml == 'true' || github.event_name != 'pull_request')
+        name: Prettier
+        uses: anttiharju/actions/prettier@bcd14f098b996de607f1e55eaf68188f0e24c29b
+        with:
+          patterns: "{*.yml,*.md}"
+
+      - if: always() && (steps.changed.outputs.dist_brew == 'true' || github.event_name != 'pull_request')
+        name: Rubocop formula
+        uses: ./.github/actions/rubocop-formula
+
+      - if: always() && (steps.changed.outputs.scripts == 'true' || github.event_name != 'pull_request')
+        name: ShellCheck
+        uses: anttiharju/actions/shellcheck@bcd14f098b996de607f1e55eaf68188f0e24c29b
+    outputs:
+      binary_changed: ${{ steps.changed.outputs.binary }}
+      dist_changed: ${{ steps.changed.outputs.dist_brew || steps.changed.outputs.dist_github }}
+      release_type: ${{ steps.semver.outputs.bump }}
+      documentation_changed: ${{ steps.changed.outputs.documentation }}
