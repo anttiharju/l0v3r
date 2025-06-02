@@ -12,6 +12,6 @@ runs:
       run: |
         ./dist/brew/render.bash
         echo "RB_FILE=${GH_REPO_NAME//-/_}" >> $GITHUB_ENV
-    - uses: anttiharju/actions/rubocop-file@bcd14f098b996de607f1e55eaf68188f0e24c29b
+    - uses: anttiharju/actions/rubocop-file@v0
       with:
         file: "dist/brew/.${{ env.RB_FILE }}.rb"
