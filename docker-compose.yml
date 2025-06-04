@@ -37,6 +37,7 @@ services:
     ports:
       - "80:80"
       - "8404:8404"
+      - "2222:22" # Expose SSH port
     volumes:
       - ./test/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     depends_on:

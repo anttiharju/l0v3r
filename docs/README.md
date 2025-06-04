@@ -7,3 +7,7 @@
 ```sh
 docker compose down && docker compose up -d --build && docker compose exec haproxy l0v
 ```
+
+```sh
+ssh sshuser@localhost -p 2222
+```
