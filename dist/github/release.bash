@@ -14,7 +14,7 @@ echo "$arch"
 rm -rf "tmp/$os-$arch"
 repo_name="$(basename "$(pwd)")"
 # Disable CGO to ensure static linking
-CGO_ENABLED=0 go build -ldflags "-s -w -buildid=github-$version" -trimpath -o "tmp/$os-$arch/$repo_name"
+CGO_ENABLED=0 go build -ldflags "-s -w -buildid=" -trimpath
 
 cp LICENSE "tmp/$os-$arch"
 cp -r docs/* "tmp/$os-$arch"

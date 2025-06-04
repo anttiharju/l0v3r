@@ -30,7 +30,9 @@ services:
       - loadbalancer_network
 
   haproxy:
-    image: haproxy:3.1.8-alpine3.22
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: haproxy
     ports:
       - "80:80"
@@ -41,6 +43,9 @@ services:
       - web1
       - web2
       - web3
+    # Keep the container running with an interactive terminal
+    stdin_open: true
+    tty: true
     networks:
       - loadbalancer_network
 
