@@ -29,6 +29,7 @@ go.work.sum
 !/LICENSE
 !/*/
 !/*.*
+!/Dockerfile
 
 # Docs build output
 site
